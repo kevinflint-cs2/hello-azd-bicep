@@ -4,6 +4,7 @@ from dotenv import load_dotenv, find_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 
+
 @pytest.fixture(scope="session")
 def env():
     # Load .env from repo root (or nearest up the tree)
@@ -23,6 +24,7 @@ def env():
         "agent_name": agent_name,
         "model_name": model_name,
     }
+
 
 @pytest.fixture(scope="session")
 def project_client(env):

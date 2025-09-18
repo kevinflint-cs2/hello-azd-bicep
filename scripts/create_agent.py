@@ -1,38 +1,27 @@
-# scripts/create_agent.py
-
 import os
-from dotenv import load_dotenv, find_dotenv
-from azure.identity import DefaultAzureCredential
+from dotenv import load_dotenv
 from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import CodeInterpreterTool
+from azure.identity import DefaultAzureCredential
 
-# Load environment variables from .env (searches up the tree)
-load_dotenv(find_dotenv())
 
-# Required / optional env vars
-endpoint = os.getenv("PROJECT_ENDPOINT")  # e.g., https://<account>.services.ai.azure.com/api/projects/<project>
-model = os.getenv("MODEL_DEPLOYMENT_NAME", "gpt-4o-mini")
-agent_name = os.getenv("AGENT_NAME", "ci-agent")
+load_dotenv()
+name_model = os.environ["MODEL_DEPLOYMENT_NAME"]
+name_agent = os.environ["AGENT_NAME"]
+project_endpoint = os.environ["PROJECT_ENDPOINT"]
 
-if not endpoint:
-    raise RuntimeError("Missing PROJECT_ENDPOINT in environment/.env")
 
-# Authenticate using Azure credentials (works with az login, MSI, or SPN vars)
-credential = DefaultAzureCredential()
-client = AIProjectClient(endpoint=endpoint, credential=credential)
+# Create an AIProjectClient instance
+project_client = AIProjectClient(
+    endpoint=project_endpoint,
+    credential=DefaultAzureCredential(),  # Use Azure Default Credential for authentication
+)
 
-# Idempotent: create if missing; otherwise update
-agents = list(client.agents.list())
-agent = next((a for a in agents if a.name == agent_name), None)
 
-if agent is None:
-    agent = client.agents.create(
-        name=agent_name,
-        model=model,
-        instructions="You are a helpful agent for CI smoke tests.",
-        tools=[CodeInterpreterTool()],
+with project_client:
+    # Create an agent with the Code Interpreter tool
+    agent = project_client.agents.create_agent(
+        model=name_model,  # Model deployment name
+        name=name_agent,  # Name of the agent
+        instructions="You are a helpful agent for CI smoke tests.",  # Instructions for the agent
     )
-else:
-    client.agents.update(agent_id=agent.id, instructions="(updated)")
-
-print("Agent ready:", agent.id)
+    print(f"Created agent, ID: {agent.id}")

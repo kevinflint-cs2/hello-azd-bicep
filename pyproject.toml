@@ -16,6 +16,10 @@ python-dotenv = ">=1.1.1,<2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
+ruff = "^0.13.1"
+mypy = "^1.18.1"
+poethepoet = "^0.37.0"
+commitizen = "^4.9.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -29,3 +33,16 @@ markers = [
   "smoke: quick smoke tests against Azure AI Foundry",
   "e2e: full end-to-end tests (live Azure calls)"
 ]
+
+[tool.poe.tasks]
+fmt = "ruff format ."
+fix = "ruff check . --fix"
+lint = "ruff check ."
+typecheck = "mypy scripts tests"
+test = "poetry run pytest -q -m smoke"
+envsync = 'azd env set --file .env -e dev'
+deploy = "azd up"
+destroy = "azd down --purge"
+
+[tool.poe.tasks.checks]
+sequence = ["fmt", "fix", "lint", "typecheck", "test"]
