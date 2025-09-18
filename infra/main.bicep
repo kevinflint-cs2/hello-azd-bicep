@@ -61,6 +61,19 @@ module aiFoundry './modules/ai-foundry-project.bicep' = {
   }
 }
 
+module chat4oMini './modules/aoai-model-chatgpt4o-mini.bicep' = {
+  name: 'chatgpt4o-mini-deployment'
+  params: {
+    location: location
+    accountName: foundryAccountName
+    // Optional overrides:
+    // deploymentName: 'gpt-4o-mini'
+    // modelVersion: '2024-07-18'
+    // skuName: 'GlobalStandard'
+    // capacity: 2
+  }
+}
+
 output storageAccountName string = storage.outputs.name
 output logAnalyticsName   string = observability.outputs.laNameOut
 output appInsightsName    string = observability.outputs.appiNameOut
