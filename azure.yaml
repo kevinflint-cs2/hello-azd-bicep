@@ -1,0 +1,4 @@
+name: hello-azd-bicep
+infra:
+  provider: bicep
+  path: infra

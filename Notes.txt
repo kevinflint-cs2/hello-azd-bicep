@@ -1,0 +1,15 @@
+###############
+## PRE-BUILD ##
+###############
+
+az provider register -n Microsoft.CognitiveServices
+az provider register -n Microsoft.MachineLearningServices
+
+################
+## MID-BUILD  ##
+################
+
+
+################
+## POST-BUILD ##
+################
