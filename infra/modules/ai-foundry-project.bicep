@@ -58,6 +58,7 @@ resource project 'Microsoft.CognitiveServices/accounts/projects@2025-06-01' = {
   tags: { managedBy: 'bicep' }
 }
 
+
 // ----- RBAC at project scope (optional) -----
 var roleIdProjectManager = 'eadc314b-1a2d-4efa-be10-5d325db5065e' // Azure AI Project Manager
 var roleIdAiUser         = '53ca6127-db72-4b80-b1b0-d745d6d5456d' // Azure AI User

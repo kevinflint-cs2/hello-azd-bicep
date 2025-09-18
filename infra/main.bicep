@@ -64,7 +64,6 @@ module aiFoundry './modules/ai-foundry-project.bicep' = {
 module chat4oMini './modules/aoai-model-chatgpt4o-mini.bicep' = {
   name: 'chatgpt4o-mini-deployment'
   params: {
-    location: location
     accountName: foundryAccountName
     // Optional overrides:
     // deploymentName: 'gpt-4o-mini'

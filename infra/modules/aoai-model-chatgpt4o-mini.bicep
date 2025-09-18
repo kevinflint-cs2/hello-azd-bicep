@@ -1,6 +1,3 @@
-@description('Azure region of the Foundry account')
-param location string
-
 @description('Name of the Foundry account (Microsoft.CognitiveServices/accounts) in this resource group')
 param accountName string
 
@@ -31,7 +28,6 @@ resource account 'Microsoft.CognitiveServices/accounts@2024-04-01-preview' exist
 resource modelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
   name: deploymentName
   parent: account
-  location: location
   sku: {
     name: skuName
     capacity: capacity
