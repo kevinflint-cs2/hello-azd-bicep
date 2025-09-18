@@ -45,6 +45,31 @@ module observability './modules/observability.bicep' = {
   }
 }
 
+module keyvault './modules/key-vault.bicep' = {
+  name: 'keyvault'
+  params: {
+    location: location
+    namePrefix: namePrefix
+    envName: envName
+    skuName: 'standard'
+    // Wire diagnostics to your LA workspace
+    logAnalyticsWorkspaceId: observability.outputs.laIdOut
+
+    // Example principal IDs (objectIds) for RBAC:
+    // - Logic App (Standard) / Function App system-assigned identity principalId
+    // - Service principal used by your SOAR automations
+    secretWriterPrincipalIds: [
+      // '<objectId-of-ci/seeding-identity-that-adds-secrets>'
+    ]
+    secretReaderPrincipalIds: [
+      // '<objectId-of-app/logicapp/func-that-reads-secrets>'
+    ]
+    adminPrincipalIds: [
+      // '<objectId-of-break-glass-admin-group>'
+    ]
+  }
+}
+
 var foundryAccountName   = toLower('${namePrefix}-aifa-${envName}')
 var foundryProjectName   = toLower('${namePrefix}-aifp-${envName}')
 
