@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "hello-azd-bicep"
+version = "0.1.0"
+description = "An Azure AI Foundry Agentic AI helloworld."
+authors = ["kevinflint-cs2 <kevin.flint@cybersecuritysquared.com>"]
+license = "MIT"
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.12,<4.0"
+azure-ai-projects = ">=1.0.0,<2.0.0"
+azure-identity = ">=1.25.0,<2.0.0"
+openai = ">=1.108.0,<2.0.0"
+python-dotenv = ">=1.1.1,<2.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-q"
+markers = [
+  "smoke: quick smoke tests against Azure AI Foundry",
+  "e2e: full end-to-end tests (live Azure calls)"
+]

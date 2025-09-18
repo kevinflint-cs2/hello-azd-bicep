@@ -97,6 +97,7 @@ module chat4oMini './modules/aoai-model-chatgpt4o-mini.bicep' = {
     // skuName: 'GlobalStandard'
     // capacity: 2
   }
+  dependsOn: [ aiFoundry ]
 }
 
 output storageAccountName string = storage.outputs.name

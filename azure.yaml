@@ -2,3 +2,15 @@ name: hello-azd-bicep
 infra:
   provider: bicep
   path: infra
+hooks:
+  postprovision:
+    shell: sh
+    run: |
+      # Load azd env vars into the shell
+      while IFS='=' read -r k v; do v="${v%\"}"; v="${v#\"}"; export "$k=$v"; done <<EOF
+      $(azd env get-values)
+      EOF
+      # Compute the project endpoint from your naming
+      export PROJECT_ENDPOINT="https://${AIFOUNDRY_ACCOUNT}.services.ai.azure.com/api/projects/${AIFOUNDRY_PROJECT}"
+      export MODEL_DEPLOYMENT_NAME="${MODEL_DEPLOYMENT_NAME:-gpt-4o-mini}"
+      python ./scripts/create_agent.py
