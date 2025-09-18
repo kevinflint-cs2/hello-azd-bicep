@@ -14,6 +14,10 @@ param accountSku string = 'S0'
 @description('Workspace resourceId for diagnostics (Log Analytics)')
 param workspaceId string
 
+// In ./infra/modules/ai-foundry-project.bicep
+@description('Name of the diagnostic setting to create/update on the AI Foundry account')
+param diagSettingName string
+
 @description('Principal IDs to grant Azure AI Project Manager at the project scope')
 param projectManagerPrincipalIds array = []
 
@@ -36,14 +40,19 @@ resource account 'Microsoft.CognitiveServices/accounts@2025-06-01' = {
 
 // Account diagnostics -> Log Analytics
 resource acctDiag 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-  name: 'aifoundry-account-to-la'
+  name: diagSettingName
   scope: account
   properties: {
     workspaceId: workspaceId
-    logs:    [ { categoryGroup: 'AllLogs',    enabled: true } ]
-    metrics: [ { category:      'AllMetrics', enabled: true } ]
+    logs: [
+      { categoryGroup: 'AllLogs', enabled: true }
+    ]
+    metrics: [
+      { category: 'AllMetrics', enabled: true }
+    ]
   }
 }
+
 
 // ----- Project (child of account) -----
 resource project 'Microsoft.CognitiveServices/accounts/projects@2025-06-01' = {

@@ -55,6 +55,7 @@ module aiFoundry './modules/ai-foundry-project.bicep' = {
     accountName: foundryAccountName
     projectName: foundryProjectName
     accountSku: 'S0'
+    diagSettingName: 'aifoundry-account-to-la'
     workspaceId: observability.outputs.laIdOut
     projectManagerPrincipalIds: projectManagerPrincipalIds
     projectUserPrincipalIds: projectUserPrincipalIds
