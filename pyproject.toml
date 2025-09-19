@@ -46,16 +46,22 @@ fmt = "ruff format ."
 fix = "ruff check . --fix"
 lint = "ruff check ."
 typecheck = "mypy scripts tests"
-test = "poetry run pytest -q -m smoke"
+test = "pytest -q -m smoke"
 envsync = 'azd env set --file .env -e dev'
 login-az = "az login"
 login-azd = "azd login"
 deploy = "azd up"
-destroy = "azd down --purge"
+destroy = "azd down --purge --force --no-prompt"
 git-add = "git add ."
 git-push = "git push -u origin main"
 cz-commit = "cz commit"
-cleanup-agents = " python ./scripts/cleanup_agents.py"
+cleanup-agents = "python ./scripts/cleanup_agents.py"
+envs-set = "python ./scripts/set_envs.py"
+envs-clean-root = "rm -f .env"
+envs-clean-azure = "rm -rf .azure"
+
+[tool.poe.tasks.clean]
+sequence = ["envs-clean-root", "envs-clean-azure"]
 
 [tool.poe.tasks.checks]
 sequence = ["fmt", "fix", "lint", "typecheck"]
@@ -64,7 +70,7 @@ sequence = ["fmt", "fix", "lint", "typecheck"]
 sequence = ["git-add", "cz-commit", "git-push"]
 
 [tool.poe.tasks.up]
-sequence = ["login-azd", "deploy", "test"]
+sequence = ["login-azd", "envs-set", "deploy", "test"]
 
 [tool.poe.tasks.down]
 sequence = ["cleanup-agents", "destroy"]
