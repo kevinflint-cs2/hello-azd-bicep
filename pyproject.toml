@@ -41,7 +41,6 @@ tag_format = "v$version"
 update_changelog = true
 changelog_file = "CHANGELOG.md"
 
-
 [tool.poe.tasks]
 fmt = "ruff format ."
 fix = "ruff check . --fix"
@@ -56,9 +55,16 @@ destroy = "azd down --purge"
 git-add = "git add ."
 git-push = "git push -u origin main"
 cz-commit = "cz commit"
+cleanup-agents = " python ./scripts/cleanup_agents.py"
 
 [tool.poe.tasks.checks]
 sequence = ["fmt", "fix", "lint", "typecheck"]
 
 [tool.poe.tasks.commit]
 sequence = ["git-add", "cz-commit", "git-push"]
+
+[tool.poe.tasks.up]
+sequence = ["login-azd", "deploy", "test"]
+
+[tool.poe.tasks.down]
+sequence = ["cleanup-agents", "destroy"]

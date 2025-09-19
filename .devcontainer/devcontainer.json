@@ -26,5 +26,5 @@
   },
   "remoteUser": "vscode",
   "postCreateCommand": "bash -lc 'set -euxo pipefail; az bicep install || true; python -m pip install --upgrade pip pipx; if ! command -v poetry >/dev/null 2>&1; then pipx install poetry; fi; poetry config virtualenvs.in-project true; curl -fsSL https://aka.ms/install-azd.sh | bash; if [ -f pyproject.toml ]; then poetry install --no-interaction --no-ansi; fi'",
-  "postStartCommand": "bash -lc 'echo \"azd: $(azd version 2>/dev/null || echo not installed)\"; az --version | head -n 1; az bicep version || true; poetry --version || true'"
+  "postStartCommand": "bash -lc 'echo \"azd: $(azd version 2>/dev/null || echo not installed)\"; az --version | head -n 1; az bicep version || true; poetry --version || true'; az provider register -n Microsoft.CognitiveServices || true; az provider register -n Microsoft.MachineLearningServices || true"
 }
