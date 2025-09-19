@@ -1,3 +1,7 @@
+# PROMPTS
+
+## Prompt: determine best strategy for different envs using bicep and python
+
 Tech Stack:
 - GitHub for repository
 - azd/bicep for infra
@@ -14,6 +18,9 @@ Currently I am using a single env named dev, but I will want to allow for dev, p
 
 What is the best strategy for multiple environments for both azd and python?
 
+### Result: Over complicated things, simplified things using poe taskers
+
+## Prompt: build env creation python file
 
 Ok, took your advice. 
 
@@ -49,3 +56,32 @@ Here is an example of a working .env file
 
 Review my steps, and identify any missed steps, if needed ask for input as needed for missed steps or additonal functionality. Once done, provide the python code.  
 
+### Result: Actually created a decent env file, later I added code to update root .env so I could reduce my poe tasks from 3 to 1
+
+## Prompt: create readme.md
+
+Write a proper readme.md using the information below as you see fit. 
+
+What is this?
+Simple automated setup of Azure AI Foundry to use a single AI Agent. Good Azure Agentic AI starter kit.
+
+Tech Stack:
+- GitHub for repository
+- azd/bicep for infra
+- azd for environment 
+- python 3.12 for code, specifically ai agent creation, deletion, and queries
+- azure.yaml file kicks off the ai agent creation script
+- poetry for dependcies and virtual environment
+- poe the poet for tasks
+- ruff for lint, formatting
+- mypy for type checking
+- commitizen for commits
+- detect-secrets to detect exposed secrets
+- pre-commits to block commits with secrets
+
+General setup
+- Run "poetry run poe up", follow prompts, it does the rest to build Azure AI Foundry infra and an AI Agent, even runs a post creation test
+- Run "poetry run python ./scripts/ask_question.py 'what is 1+1, answer only'"
+- Run "poetry run poe down" to tear everything down
+
+Make this a proper well documented repository using the readme.md you build. Output so that I can paste in my readme. 
