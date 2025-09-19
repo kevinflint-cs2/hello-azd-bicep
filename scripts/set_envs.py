@@ -2,7 +2,6 @@
 # ./scripts/set_envs.py
 from __future__ import annotations
 
-import os
 import re
 import subprocess
 import sys
@@ -34,7 +33,10 @@ UUID_RE = re.compile(
     r"[0-9a-fA-F]{12}$"
 )
 
-def run(cmd: List[str], check: bool = True, capture: bool = True) -> subprocess.CompletedProcess:
+
+def run(
+    cmd: List[str], check: bool = True, capture: bool = True
+) -> subprocess.CompletedProcess:
     return subprocess.run(
         cmd,
         check=check,
@@ -42,6 +44,7 @@ def run(cmd: List[str], check: bool = True, capture: bool = True) -> subprocess.
         stdout=subprocess.PIPE if capture else None,
         stderr=subprocess.STDOUT if capture else None,
     )
+
 
 def prompt_choice(prompt: str, choices: List[str], default: str) -> str:
     choice_str = "/".join(choices)
@@ -52,6 +55,7 @@ def prompt_choice(prompt: str, choices: List[str], default: str) -> str:
         print(f"Invalid choice: {raw}. Using default: {default}")
         return default
     return raw
+
 
 def prompt_text(prompt: str, default: str | None = None, validator=None) -> str:
     suffix = f" (default: {default})" if default is not None else ""
@@ -66,8 +70,10 @@ def prompt_text(prompt: str, default: str | None = None, validator=None) -> str:
         if raw:
             return raw
 
+
 def is_uuid(s: str) -> bool:
     return bool(UUID_RE.match(s))
+
 
 def try_default_subscription() -> str | None:
     try:
@@ -76,6 +82,7 @@ def try_default_subscription() -> str | None:
         return sub if is_uuid(sub) else None
     except Exception:
         return None
+
 
 def parse_env_file(path: Path) -> Dict[str, str]:
     result: Dict[str, str] = {}
@@ -89,6 +96,7 @@ def parse_env_file(path: Path) -> Dict[str, str]:
         result[k.strip()] = v.strip().strip('"').strip("'")
     return result
 
+
 def ensure_azd_env(env: str, subscription_id: str, location: str) -> None:
     try:
         run(["azd", "env", "select", env], check=True)
@@ -96,22 +104,33 @@ def ensure_azd_env(env: str, subscription_id: str, location: str) -> None:
     except subprocess.CalledProcessError:
         pass
     print(f"Creating azd environment '{env}' ...")
-    run([
-        "azd", "env", "new", env,
-        "--subscription", subscription_id,
-        "--location", location,
-        "--no-prompt",
-    ], check=True)
+    run(
+        [
+            "azd",
+            "env",
+            "new",
+            env,
+            "--subscription",
+            subscription_id,
+            "--location",
+            location,
+            "--no-prompt",
+        ],
+        check=True,
+    )
+
 
 def write_env_file(env_path: Path, env_map: Dict[str, str]) -> None:
     env_path.parent.mkdir(parents=True, exist_ok=True)
     lines = [f"{k}={env_map[k]}" for k in sorted(env_map.keys())]
     env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
+
 def export_root_env_from_azd(env: str, root_path: Path = Path(".env")) -> None:
     cp = run(["azd", "env", "get-values", "-e", env, "--no-prompt"])
     root_path.write_text(cp.stdout, encoding="utf-8")
     print(f"Wrote {root_path} (exported from azd env '{env}')")
+
 
 def main() -> int:
     print("=== Azure env bootstrap (single-task) ===")
@@ -124,10 +143,16 @@ def main() -> int:
     existing = parse_env_file(per_env_file) if per_env_file.exists() else {}
 
     # Get/confirm required core values
-    name_prefix = existing.get("NAME_PREFIX") or prompt_text("Name prefix (e.g., 'wt')", default=DEFAULT_PREFIX)
-    location = existing.get("AZURE_LOCATION") or prompt_text("Azure location", default=DEFAULT_LOCATION)
+    name_prefix = existing.get("NAME_PREFIX") or prompt_text(
+        "Name prefix (e.g., 'wt')", default=DEFAULT_PREFIX
+    )
+    location = existing.get("AZURE_LOCATION") or prompt_text(
+        "Azure location", default=DEFAULT_LOCATION
+    )
 
-    default_sub = existing.get("AZURE_SUBSCRIPTION_ID") or try_default_subscription() or ""
+    default_sub = (
+        existing.get("AZURE_SUBSCRIPTION_ID") or try_default_subscription() or ""
+    )
     subscription_id = existing.get("AZURE_SUBSCRIPTION_ID") or prompt_text(
         "Azure subscription ID (UUID)", default=default_sub, validator=is_uuid
     )
@@ -138,14 +163,18 @@ def main() -> int:
         print("Select Storage SKU:")
         for idx, sku in enumerate(STORAGE_SKUS, start=1):
             print(f"  {idx}) {sku}")
+
         def sku_validator(s: str) -> bool:
             return s.isdigit() and 1 <= int(s) <= len(STORAGE_SKUS)
-        sku_index_raw = prompt_text("Enter number", default="1", validator=sku_validator)
+
+        sku_index_raw = prompt_text(
+            "Enter number", default="1", validator=sku_validator
+        )
         storage_sku = STORAGE_SKUS[int(sku_index_raw) - 1]
 
     model = existing.get("MODEL_DEPLOYMENT_NAME") or prompt_text(
         "Model deployment name (only 'gpt-4o-mini' supported for now)",
-        default=DEFAULT_MODEL
+        default=DEFAULT_MODEL,
     )
 
     # Derived values
@@ -169,20 +198,35 @@ def main() -> int:
     }
 
     # Ensure azd env exists/selected
-    ensure_azd_env(env=azure_env_name, subscription_id=subscription_id, location=location)
+    ensure_azd_env(
+        env=azure_env_name, subscription_id=subscription_id, location=location
+    )
 
     # If per-env file did not exist, write it now; if it existed, refresh it with any new derived values
     write_env_file(per_env_file, {**existing, **env_map})
     print(f"Wrote {per_env_file}")
 
     # Push values into azd store for this env (import from per-env file)
-    run(["azd", "env", "set", "--file", str(per_env_file), "-e", azure_env_name, "--no-prompt"], check=True)
+    run(
+        [
+            "azd",
+            "env",
+            "set",
+            "--file",
+            str(per_env_file),
+            "-e",
+            azure_env_name,
+            "--no-prompt",
+        ],
+        check=True,
+    )
     print("Synced values into azd env store.")
 
     # Always export root .env from azd so Python uses the exact same set
     export_root_env_from_azd(env=azure_env_name, root_path=Path(".env"))
     print("Done.")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

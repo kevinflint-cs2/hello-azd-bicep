@@ -1,12 +1,5 @@
-# TODOs
-
-- [ ] ./infra/modules/key-vault.bicep:Purge protection is causing issues during testing, removing for now, later need to disable in dev and enable in prod
-- [ ] Handle different environments (dev and prod maybe preprod)
-- [x] ./infra/main.bicep: LLM is created before Azure AI Foundry
-- [x] Add needed az providers for cognitive services and machine learning services
-
-
 Tech Stack:
+- GitHub for repository
 - azd/bicep for infra
 - azd for .env files
 - python 3.12 for code, specifically ai agent creation, deletion, and queries
@@ -52,15 +45,7 @@ Now I have the issue of the first fresh run with no .env files. I would like to 
 - At this point, Azure Developer CLI environment has been set, and the .env has then neccesary envars to run bicep and python files. 
 
 Here is an example of a working .env file
-AGENT_NAME="wt-smoketest-dev"
-AIFOUNDRY_ACCOUNT="wt-aifa-dev"
-AZURE_ENV_NAME="dev"
-AZURE_LOCATION="eastus2"
-AZURE_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
-MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
-NAME_PREFIX="wt"
-PROJECT_ENDPOINT="https://wt-aifp-dev.services.ai.azure.com/api/projects/wt-aifp-dev"
-STORAGE_SKU="Standard_LRS"
+[REDACTED]
 
 Review my steps, and identify any missed steps, if needed ask for input as needed for missed steps or additonal functionality. Once done, provide the python code.  
 

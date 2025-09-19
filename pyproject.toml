@@ -20,6 +20,8 @@ ruff = "^0.13.1"
 mypy = "^1.18.1"
 poethepoet = "^0.37.0"
 commitizen = "^4.9.1"
+detect-secrets = "^1.5.0"
+pre-commit = "^4.3.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -59,12 +61,15 @@ cleanup-agents = "python ./scripts/cleanup_agents.py"
 envs-set = "python ./scripts/set_envs.py"
 envs-clean-root = "rm -f .env"
 envs-clean-azure = "rm -rf .azure"
+secrets-scan = "detect-secrets scan"
+secrets-audit = "detect-secrets audit .secrets.baseline"
+secrets-validate = "detect-secrets scan --baseline .secrets.baseline"
 
 [tool.poe.tasks.clean]
 sequence = ["envs-clean-root", "envs-clean-azure"]
 
 [tool.poe.tasks.checks]
-sequence = ["fmt", "fix", "lint", "typecheck"]
+sequence = ["fmt", "fix", "lint", "typecheck", "secrets-validate", "secrets-audit"]
 
 [tool.poe.tasks.push]
 sequence = ["git-add", "cz-commit", "git-push"]
