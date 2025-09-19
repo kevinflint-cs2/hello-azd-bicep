@@ -11,6 +11,7 @@ from azure.ai.agents.models import ListSortOrder  # for ordering messages
 
 POLL_SECONDS = 1.5
 
+
 def ensure_agent_id(client: AIProjectClient) -> str:
     # Prefer AGENT_ID if set
     if os.getenv("AGENT_ID"):
@@ -21,7 +22,9 @@ def ensure_agent_id(client: AIProjectClient) -> str:
     if name:
         try:
             # list() may not exist in older builds; if so, just create
-            for a in client.agents.list_agents():  # may be named slightly differently across betas
+            for a in (
+                client.agents.list_agents()
+            ):  # may be named slightly differently across betas
                 if getattr(a, "name", "") == name:
                     return a.id
         except Exception:
@@ -36,6 +39,7 @@ def ensure_agent_id(client: AIProjectClient) -> str:
     )
     return agent.id
 
+
 def wait_for_run(project_client: AIProjectClient, thread_id: str, run_id: str):
     """Poll until run reaches a terminal state."""
     while True:
@@ -45,7 +49,10 @@ def wait_for_run(project_client: AIProjectClient, thread_id: str, run_id: str):
             return run
         time.sleep(POLL_SECONDS)
 
-def latest_assistant_text(project_client: AIProjectClient, thread_id: str) -> Optional[str]:
+
+def latest_assistant_text(
+    project_client: AIProjectClient, thread_id: str
+) -> Optional[str]:
     # Newer SDKs provide order/limit args
     try:
         msgs = project_client.agents.messages.list(
@@ -64,10 +71,13 @@ def latest_assistant_text(project_client: AIProjectClient, thread_id: str) -> Op
                 return content
             if isinstance(content, list):
                 for part in content:
-                    if isinstance(part, dict) and ("text" in part or part.get("type") == "text"):
+                    if isinstance(part, dict) and (
+                        "text" in part or part.get("type") == "text"
+                    ):
                         return part.get("text") or part["text"]
             return str(content) if content is not None else None
     return None
+
 
 def main():
     load_dotenv()
@@ -110,6 +120,7 @@ def main():
         answer = latest_assistant_text(project_client, thread_id=thread.id)
         print("\n=== Agent Reply ===\n")
         print(answer or "[No assistant reply found]")
+
 
 if __name__ == "__main__":
     main()

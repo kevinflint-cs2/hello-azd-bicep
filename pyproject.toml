@@ -34,6 +34,14 @@ markers = [
   "e2e: full end-to-end tests (live Azure calls)"
 ]
 
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "poetry"         # keeps version in pyproject the single source of truth
+tag_format = "v$version"
+update_changelog = true
+changelog_file = "CHANGELOG.md"
+
+
 [tool.poe.tasks]
 fmt = "ruff format ."
 fix = "ruff check . --fix"
@@ -41,8 +49,16 @@ lint = "ruff check ."
 typecheck = "mypy scripts tests"
 test = "poetry run pytest -q -m smoke"
 envsync = 'azd env set --file .env -e dev'
+login-az = "az login"
+login-azd = "azd login"
 deploy = "azd up"
 destroy = "azd down --purge"
+git-add = "git add ."
+git-push = "git push -u origin main"
+cz-commit = "cz commit"
 
 [tool.poe.tasks.checks]
-sequence = ["fmt", "fix", "lint", "typecheck", "test"]
+sequence = ["fmt", "fix", "lint", "typecheck"]
+
+[tool.poe.tasks.commit]
+sequence = ["git-add", "cz-commit", "git-push"]
